@@ -28,17 +28,19 @@ router.register(r'workouts', WorkoutViewSet)
 router.register(r'leaderboard', LeaderboardViewSet)
 
 @api_view(['GET'])
-def api_root(request, format=None):
-    return Response({
-        'users': '/api/users/',
-        'teams': '/api/teams/',
-        'activities': '/api/activities/',
-        'workouts': '/api/workouts/',
-        'leaderboard': '/api/leaderboard/',
+def api_root(request):
+    codespace_name = os.environ.get('CODESPACE_NAME', 'localhost')
+    base_url = f"https://{codespace_name}-8000.app.github.dev/api/"
+    return JsonResponse({
+        "activities": f"{base_url}activities/",
+        "users": f"{base_url}users/",
+        "teams": f"{base_url}teams/",
+        "leaderboard": f"{base_url}leaderboard/",
+        "workouts": f"{base_url}workouts/"
     })
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include(router.urls)),
+    path('api/', api_root),
     path('', api_root, name='api-root'),
 ]
